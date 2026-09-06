@@ -4,7 +4,7 @@
 
 RegistroIncidencias es una aplicación móvil desarrollada para permitir el registro y consulta de incidencias de manera organizada.
 
-El proyecto se encuentra actualmente en una etapa inicial de desarrollo. La aplicación presenta una interfaz de inicio que servirá como punto de partida para implementar posteriormente las funcionalidades de registro y consulta de incidencias.
+El proyecto se encuentra actualmente en una etapa inicial de desarrollo. La aplicación presenta una interfaz para ingresar información básica de una incidencia y servirá como base para implementar posteriormente las funcionalidades de almacenamiento y consulta.
 
 ## Tecnologías y herramientas utilizadas
 
@@ -21,17 +21,37 @@ El proyecto se encuentra actualmente en una etapa inicial de desarrollo. La apli
 
 - Pantalla inicial de la aplicación.
 - Título y descripción relacionados con el registro de incidencias.
-- Tarjeta informativa para iniciar el proceso de registro.
-- Botón "Iniciar el reporte".
+- Campos de entrada para el título y la descripción de una incidencia.
+- Estado básico utilizando `remember` y `mutableStateOf`.
+- Botón "Crear reporte".
+- Retroalimentación visible después de crear un reporte.
 - Personalización de textos y colores de la interfaz.
+- Ejecución y prueba de la aplicación en un dispositivo físico.
 
 ### Funcionalidades pendientes
 
-- Implementar la acción del botón "Iniciar el reporte".
-- Crear el formulario para registrar incidencias.
 - Implementar el almacenamiento de información.
 - Implementar la consulta de incidencias.
 - Desarrollar las siguientes pantallas y funcionalidades del sistema.
+- Incorporar persistencia de datos mediante una base de datos.
+
+## Avance - Semana 3
+
+Se mejoró la pantalla inicial de RegistroIncidencias para permitir la entrada básica de información por parte del usuario.
+
+### Cambios realizados
+
+- Se agregó un campo para el título de la incidencia.
+- Se agregó un campo para la descripción.
+- Se implementó estado básico utilizando `remember` y `mutableStateOf`.
+- Se agregó el botón "Crear reporte".
+- Se agregó retroalimentación visible al crear un reporte.
+- Se actualizó la interfaz para facilitar el ingreso de información.
+- La aplicación fue probada en un dispositivo físico.
+
+### Estado actual
+
+La aplicación permite ingresar un título y una descripción y muestra una retroalimentación inicial al presionar "Crear reporte". La información todavía no se almacena en una base de datos.
 
 ## Cómo abrir el proyecto
 
@@ -57,7 +77,8 @@ RegistroIncidencias
 ├── build.gradle.kts
 ├── settings.gradle.kts
 └── README.md
+```
 
-##Autor
+## Autor
 
 David De la Cruz
