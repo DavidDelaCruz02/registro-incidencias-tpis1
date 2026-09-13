@@ -2,65 +2,58 @@
 
 ## Propósito del proyecto
 
-RegistroIncidencias es una aplicación móvil desarrollada para permitir el registro y consulta de incidencias de manera organizada.
+RegistroIncidencias es una aplicación móvil desarrollada para facilitar el
+registro y posterior consulta de incidencias relacionadas con sistemas
+informáticos de manera organizada.
 
-El proyecto se encuentra actualmente en una etapa inicial de desarrollo. La aplicación presenta una interfaz para ingresar información básica de una incidencia y servirá como base para implementar posteriormente las funcionalidades de almacenamiento y consulta.
+Actualmente el proyecto se encuentra en una etapa inicial de desarrollo y
+cuenta con una pantalla funcional para ingresar y preparar información básica
+de una incidencia.
 
-## Tecnologías y herramientas utilizadas
+## Tecnologías utilizadas
 
 - Android Studio
 - Kotlin
 - Jetpack Compose
 - Gradle
-- Git
-- GitHub
+- Git y GitHub
 
-## Estado actual del proyecto
+## Funcionalidades actuales
 
-### Funcionalidades implementadas
-
-- Pantalla inicial de la aplicación.
-- Título y descripción relacionados con el registro de incidencias.
-- Campos de entrada para el título y la descripción de una incidencia.
-- Estado básico utilizando `remember` y `mutableStateOf`.
+- Pantalla inicial de RegistroIncidencias.
+- Campo para ingresar el título de una incidencia.
+- Campo para ingresar una descripción breve.
+- Estado básico mediante `remember` y `mutableStateOf`.
 - Botón "Crear reporte".
-- Retroalimentación visible después de crear un reporte.
-- Personalización de textos y colores de la interfaz.
-- Ejecución y prueba de la aplicación en un dispositivo físico.
+- Retroalimentación visible al preparar un reporte.
+- Validación básica cuando no se ingresa un título.
+- Ejecución y prueba en un dispositivo físico.
 
-### Funcionalidades pendientes
+## Requerimientos iniciales
 
-- Implementar el almacenamiento de información.
-- Implementar la consulta de incidencias.
-- Desarrollar las siguientes pantallas y funcionalidades del sistema.
-- Incorporar persistencia de datos mediante una base de datos.
+### Funcionales
 
-## Avance - Semana 3
+- Permitir al usuario ingresar el título de una incidencia.
+- Permitir al usuario ingresar una descripción breve.
 
-Se mejoró la pantalla inicial de RegistroIncidencias para permitir la entrada básica de información por parte del usuario.
+### Interfaz y uso
 
-### Cambios realizados
+- Presentar campos claramente identificados para facilitar el ingreso de
+  información.
+- Mostrar una retroalimentación visible al presionar "Crear reporte".
 
-- Se agregó un campo para el título de la incidencia.
-- Se agregó un campo para la descripción.
-- Se implementó estado básico utilizando `remember` y `mutableStateOf`.
-- Se agregó el botón "Crear reporte".
-- Se agregó retroalimentación visible al crear un reporte.
-- Se actualizó la interfaz para facilitar el ingreso de información.
-- La aplicación fue probada en un dispositivo físico.
+## Alcance actual
 
-### Estado actual
+La aplicación permite ingresar información básica y preparar visualmente un
+reporte. En esta etapa los datos no se almacenan de forma permanente.
 
-La aplicación permite ingresar un título y una descripción y muestra una retroalimentación inicial al presionar "Crear reporte". La información todavía no se almacena en una base de datos.
+Como parte del desarrollo posterior se implementará el almacenamiento y
+consulta de incidencias, además de nuevas funcionalidades y pantallas.
 
-## Cómo abrir el proyecto
+## Ejecución
 
-1. Instalar Android Studio.
-2. Clonar o descargar el repositorio desde GitHub.
-3. Abrir Android Studio.
-4. Seleccionar la carpeta del proyecto `RegistroIncidencias`.
-5. Esperar a que Android Studio sincronice el proyecto con Gradle.
-6. Ejecutar la aplicación utilizando un dispositivo físico o un emulador Android.
+El proyecto puede ejecutarse desde Android Studio utilizando un emulador
+Android o un dispositivo físico.
 
 ## Estructura principal
 
@@ -72,13 +65,12 @@ RegistroIncidencias
 │   │       ├── java
 │   │       ├── res
 │   │       └── AndroidManifest.xml
-│   └── build.gradle.kts
+│   ├── build.gradle.kts
 ├── gradle
 ├── build.gradle.kts
 ├── settings.gradle.kts
 └── README.md
 ```
-
 ## Autor
 
 David De la Cruz
