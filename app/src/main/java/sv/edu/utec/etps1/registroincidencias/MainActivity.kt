@@ -3,8 +3,10 @@ package sv.edu.utec.etps1.registroincidencias
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import sv.edu.utec.etps1.registroincidencias.ui.theme.RegistroIncidenciasTheme
@@ -45,6 +50,7 @@ fun RegistroIncidenciasApp() {
     // Estados para almacenar la información ingresada
     var titulo by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
+    var prioridad by remember { mutableStateOf("") }
     var mensaje by remember { mutableStateOf("Aún no hay reporte creado") }
 
     Column(
@@ -54,6 +60,7 @@ fun RegistroIncidenciasApp() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "Registro de bitácora",
             style = MaterialTheme.typography.headlineMedium
@@ -70,6 +77,7 @@ fun RegistroIncidenciasApp() {
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -82,13 +90,17 @@ fun RegistroIncidenciasApp() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Campo para el título
+                // Campo para el título con teclado contextual
                 OutlinedTextField(
                     value = titulo,
                     onValueChange = { titulo = it },
                     label = { Text("Título") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -99,19 +111,103 @@ fun RegistroIncidenciasApp() {
                     onValueChange = { descripcion = it },
                     label = { Text("Descripción") },
                     modifier = Modifier.fillMaxWidth(),
-                    minLines = 3
+                    minLines = 3,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Done
+                    )
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Selección de prioridad
+                Text(
+                    text = "Selecciona la prioridad:",
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp)
+                            .clickable {
+                                prioridad = "Baja"
+                                mensaje = "Prioridad seleccionada: Baja"
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Baja")
+                        }
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp)
+                            .clickable {
+                                prioridad = "Media"
+                                mensaje = "Prioridad seleccionada: Media"
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Media")
+                        }
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp)
+                            .clickable {
+                                prioridad = "Alta"
+                                mensaje = "Prioridad seleccionada: Alta"
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Alta")
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Botón principal
                 Button(
                     onClick = {
-                        mensaje = if (titulo.isNotBlank()) {
-                            "Reporte preparado: $titulo"
-                        } else {
-                            "Ingrese un título para crear el reporte"
+
+                        mensaje = when {
+                            titulo.isBlank() ->
+                                "Ingrese un título para crear el reporte"
+
+                            prioridad.isBlank() ->
+                                "Seleccione una prioridad para crear el reporte"
+
+                            else ->
+                                "Reporte preparado: $titulo - Prioridad: $prioridad"
                         }
+
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF4CAF50),

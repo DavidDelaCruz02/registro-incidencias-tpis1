@@ -2,13 +2,9 @@
 
 ## Propósito del proyecto
 
-RegistroIncidencias es una aplicación móvil desarrollada para facilitar el
-registro y posterior consulta de incidencias relacionadas con sistemas
-informáticos de manera organizada.
+RegistroIncidencias es una aplicación móvil desarrollada para permitir el registro y consulta de incidencias de manera organizada.
 
-Actualmente el proyecto se encuentra en una etapa inicial de desarrollo y
-cuenta con una pantalla funcional para ingresar y preparar información básica
-de una incidencia.
+El proyecto se desarrolla de forma incremental, incorporando funcionalidades de interacción y validación básica antes de implementar el almacenamiento permanente de información.
 
 ## Tecnologías utilizadas
 
@@ -16,44 +12,44 @@ de una incidencia.
 - Kotlin
 - Jetpack Compose
 - Gradle
-- Git y GitHub
+- Git
+- GitHub
 
 ## Funcionalidades actuales
 
-- Pantalla inicial de RegistroIncidencias.
-- Campo para ingresar el título de una incidencia.
-- Campo para ingresar una descripción breve.
-- Estado básico mediante `remember` y `mutableStateOf`.
+- Pantalla inicial para el registro de incidencias.
+- Campo para ingresar el título.
+- Campo para ingresar la descripción.
+- Configuración contextual del teclado para facilitar la entrada de texto.
+- Selección de prioridad: Baja, Media y Alta.
+- Interacción táctil mediante selección de prioridad.
 - Botón "Crear reporte".
-- Retroalimentación visible al preparar un reporte.
-- Validación básica cuando no se ingresa un título.
+- Retroalimentación visible después de crear un reporte.
 - Ejecución y prueba en un dispositivo físico.
 
-## Requerimientos iniciales
+## Avance - Semana 4
 
-### Funcionales
+Durante esta semana se mejoró la interacción de la aplicación mediante la configuración del teclado y la incorporación de una selección de prioridad.
 
-- Permitir al usuario ingresar el título de una incidencia.
-- Permitir al usuario ingresar una descripción breve.
+### Cambios realizados
 
-### Interfaz y uso
+- Se configuró el teclado del campo de título utilizando `KeyboardOptions`.
+- Se estableció la capitalización de oraciones para facilitar la escritura.
+- Se configuró la acción `ImeAction.Next` para mejorar el flujo de entrada.
+- Se incorporó la selección de prioridad mediante interacción táctil.
+- Se agregaron las opciones Baja, Media y Alta.
+- Se implementó retroalimentación visible mostrando la prioridad seleccionada.
+- Se probó la aplicación en un dispositivo físico.
 
-- Presentar campos claramente identificados para facilitar el ingreso de
-  información.
-- Mostrar una retroalimentación visible al presionar "Crear reporte".
+### Estado actual
 
-## Alcance actual
+La aplicación permite ingresar el título y la descripción de una incidencia, seleccionar una prioridad y crear un reporte simulado mostrando una retroalimentación visible.
 
-La aplicación permite ingresar información básica y preparar visualmente un
-reporte. En esta etapa los datos no se almacenan de forma permanente.
-
-Como parte del desarrollo posterior se implementará el almacenamiento y
-consulta de incidencias, además de nuevas funcionalidades y pantallas.
+La información todavía no se almacena en una base de datos.
 
 ## Ejecución
 
-El proyecto puede ejecutarse desde Android Studio utilizando un emulador
-Android o un dispositivo físico.
+El proyecto puede ejecutarse desde Android Studio utilizando un emulador Android o un dispositivo físico.
 
 ## Estructura principal
 
@@ -65,7 +61,7 @@ RegistroIncidencias
 │   │       ├── java
 │   │       ├── res
 │   │       └── AndroidManifest.xml
-│   ├── build.gradle.kts
+│   └── build.gradle.kts
 ├── gradle
 ├── build.gradle.kts
 ├── settings.gradle.kts
