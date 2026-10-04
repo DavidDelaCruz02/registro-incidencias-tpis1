@@ -27,7 +27,7 @@ El proyecto se desarrolla de forma incremental, incorporando funcionalidades de 
 - Retroalimentación visible después de crear un reporte.
 - Ejecución y prueba en un dispositivo físico.
 
-## Avance - Semana 4
+## Avance - Ultima semana
 
 Durante esta semana se mejoró la interacción de la aplicación mediante la configuración del teclado y la incorporación de una selección de prioridad.
 

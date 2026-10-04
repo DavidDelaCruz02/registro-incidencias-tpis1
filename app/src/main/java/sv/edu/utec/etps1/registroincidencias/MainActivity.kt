@@ -90,7 +90,7 @@ fun RegistroIncidenciasApp() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Campo para el título con teclado contextual
+
                 OutlinedTextField(
                     value = titulo,
                     onValueChange = { titulo = it },
@@ -105,7 +105,7 @@ fun RegistroIncidenciasApp() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Campo para la descripción
+
                 OutlinedTextField(
                     value = descripcion,
                     onValueChange = { descripcion = it },
