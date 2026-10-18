@@ -1,3 +1,4 @@
+
 package sv.edu.utec.etps1.registroincidencias
 
 import android.content.Context
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -34,13 +36,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import sv.edu.utec.etps1.registroincidencias.ui.theme.RegistroIncidenciasTheme
+import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 class MainActivity : ComponentActivity() {
@@ -63,15 +66,14 @@ fun RegistroIncidenciasApp() {
         mutableStateOf("Aún no hay reporte creado")
     }
 
-    // Preparación del acelerómetro
     val context = LocalContext.current
 
     val sensorManager = remember(context) {
-        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
     }
 
     val acelerometro = remember(sensorManager) {
-        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
     var ejeX by remember { mutableStateOf(0f) }
@@ -82,27 +84,45 @@ fun RegistroIncidenciasApp() {
         mutableStateOf("Esperando lectura del sensor")
     }
 
-    // Escuchar el sensor y liberar el recurso al salir de la pantalla
+    var lecturaRecibida by remember {
+        mutableStateOf(false)
+    }
+
+    // Registrar y liberar el listener según el ciclo de vida
+    // de este componente de Compose.
     DisposableEffect(sensorManager, acelerometro) {
-        if (acelerometro != null) {
+        if (sensorManager == null || acelerometro == null) {
+            estadoMovimiento = "Acelerómetro no disponible"
+
+            onDispose { }
+        } else {
+            estadoMovimiento = "Esperando lectura del sensor"
+            lecturaRecibida = false
+
             val listener = object : SensorEventListener {
-                override fun onSensorChanged(event: SensorEvent) {
-                    val x = event.values[0]
-                    val y = event.values[1]
-                    val z = event.values[2]
+                override fun onSensorChanged(event: SensorEvent?) {
+                    if (
+                        event == null ||
+                        event.sensor.type != Sensor.TYPE_ACCELEROMETER
+                    ) {
+                        return
+                    }
 
-                    ejeX = x
-                    ejeY = y
-                    ejeZ = z
+                    ejeX = event.values[0]
+                    ejeY = event.values[1]
+                    ejeZ = event.values[2]
+                    lecturaRecibida = true
 
-                    // La gravedad normalmente aporta unos 9.8 m/s².
-                    // Una diferencia amplia puede indicar movimiento.
+                    // La magnitud incluye la gravedad.
+                    // Esta regla ofrece una interpretación aproximada.
                     val magnitud = sqrt(
-                        x * x + y * y + z * z
+                        ejeX * ejeX +
+                                ejeY * ejeY +
+                                ejeZ * ejeZ
                     )
 
                     estadoMovimiento = if (
-                        kotlin.math.abs(magnitud - 9.8f) > 2.0f
+                        abs(magnitud - SensorManager.GRAVITY_EARTH) > 2.0f
                     ) {
                         "Movimiento detectado"
                     } else {
@@ -114,23 +134,24 @@ fun RegistroIncidenciasApp() {
                     sensor: Sensor?,
                     accuracy: Int
                 ) {
-                    // No necesitamos cambiar la interfaz aquí.
+                    // No se requiere una acción adicional por ahora.
                 }
             }
 
-            sensorManager.registerListener(
+            val registrado = sensorManager.registerListener(
                 listener,
                 acelerometro,
                 SensorManager.SENSOR_DELAY_NORMAL
             )
 
+            if (!registrado) {
+                estadoMovimiento =
+                    "No fue posible iniciar la lectura del sensor"
+            }
+
             onDispose {
                 sensorManager.unregisterListener(listener)
             }
-        } else {
-            estadoMovimiento = "Acelerómetro no disponible"
-
-            onDispose { }
         }
     }
 
@@ -155,6 +176,7 @@ fun RegistroIncidenciasApp() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Formulario de registro de incidencias
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -298,42 +320,76 @@ fun RegistroIncidenciasApp() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Nueva sección del acelerómetro
+        // Diagnóstico del dispositivo
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Sensor de movimiento",
+                    text = "Diagnóstico del dispositivo",
                     style = MaterialTheme.typography.titleMedium
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                if (acelerometro != null) {
-                    Text("Estado del sensor: Disponible")
+                Text(
+                    text = when {
+                        sensorManager == null ->
+                            "Estado del sensor: Servicio no disponible"
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        acelerometro == null ->
+                            "Estado del sensor: Acelerómetro no disponible"
 
-                    Text("Eje X: %.2f m/s²".format(ejeX))
-                    Text("Eje Y: %.2f m/s²".format(ejeY))
-                    Text("Eje Z: %.2f m/s²".format(ejeZ))
+                        estadoMovimiento.startsWith("No fue posible") ->
+                            "Estado del sensor: Error al iniciar la lectura"
+
+                        else ->
+                            "Estado del sensor: Disponible"
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (sensorManager != null && acelerometro != null) {
+                    Text(
+                        text = "Sensor: ${acelerometro.name}"
+                    )
+
+                    Text(
+                        text = "Eje X: ${formatearValor(ejeX)} m/s²"
+                    )
+
+                    Text(
+                        text = "Eje Y: ${formatearValor(ejeY)} m/s²"
+                    )
+
+                    Text(
+                        text = "Eje Z: ${formatearValor(ejeZ)} m/s²"
+                    )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Interpretación: $estadoMovimiento",
+                        text = if (lecturaRecibida) {
+                            "Interpretación: $estadoMovimiento"
+                        } else {
+                            "Interpretación: esperando la primera lectura"
+                        },
                         style = MaterialTheme.typography.bodyLarge
                     )
                 } else {
                     Text(
-                        text = "Este dispositivo no tiene un acelerómetro disponible."
+                        text = "No se pueden obtener lecturas porque el acelerómetro no está disponible."
                     )
                 }
             }
         }
     }
+}
+
+private fun formatearValor(valor: Float): String {
+    return String.format(Locale.getDefault(), "%.2f", valor)
 }
 
 @Preview(showBackground = true)

@@ -90,6 +90,39 @@ La disponibilidad y las lecturas del sensor pueden variar según el dispositivo 
 
 Explorar la posibilidad de registrar eventos relacionados con el movimiento en la bitácora, permitiendo al usuario decidir cuándo asociar una lectura con una incidencia.
 
+## Avance actual - Diagnóstico del dispositivo
+
+### Objetivo
+
+Mejorar la integración del acelerómetro mediante una sección de diagnóstico que compruebe la disponibilidad del recurso, muestre sus lecturas y presente una interpretación comprensible para el usuario.
+
+### Cambios realizados
+
+- Se cambió el título de la sección a "Diagnóstico del dispositivo".
+- Se muestra el estado de disponibilidad del acelerómetro.
+- Se presenta el nombre del sensor detectado por el dispositivo.
+- Se mantienen las lecturas de los ejes X, Y y Z en m/s².
+- Se muestra una interpretación aproximada del movimiento.
+- Se incorporan mensajes para los casos en que el sensor no esté disponible o no se pueda iniciar su lectura.
+- Se comprueba el resultado del registro del `SensorEventListener`.
+- Se mantiene `DisposableEffect` para liberar el listener cuando el componente deja de utilizarse.
+
+### Pruebas realizadas
+
+La aplicación se ejecutó correctamente en un dispositivo físico Xiaomi. Se comprobó que el acelerómetro está disponible y que las lecturas de los ejes se muestran en pantalla y cambian al mover suavemente el teléfono.
+
+También se verificó que el formulario de incidencias, la selección de prioridad y el botón para crear reportes siguen funcionando.
+
+### Limitaciones
+
+La interpretación del movimiento es aproximada, porque las lecturas del acelerómetro incluyen el efecto de la gravedad. El mensaje mostrado no confirma por sí solo que haya ocurrido una incidencia real.
+
+La aplicación todavía no guarda las lecturas del sensor ni los reportes en una base de datos.
+
+### Mejora futura
+
+Permitir que el usuario registre una lectura del sensor como parte de una incidencia, junto con su descripción y la fecha del evento.
+
 ## Ejecución
 
 El proyecto puede ejecutarse desde Android Studio utilizando un emulador Android compatible o un dispositivo físico con el sensor disponible.
