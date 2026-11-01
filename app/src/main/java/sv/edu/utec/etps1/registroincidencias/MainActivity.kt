@@ -7,6 +7,9 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -47,21 +50,54 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 class MainActivity : ComponentActivity() {
+
+    private val lifecycleTag = "TPIS1_LIFECYCLE"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d(lifecycleTag, "onCreate")
+
         setContent {
             RegistroIncidenciasTheme {
                 RegistroIncidenciasApp()
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(lifecycleTag, "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(lifecycleTag, "onResume")
+    }
+
+    override fun onPause() {
+        Log.d(lifecycleTag, "onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d(lifecycleTag, "onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.d(lifecycleTag, "onDestroy")
+        super.onDestroy()
+    }
 }
 
 @Composable
 fun RegistroIncidenciasApp() {
+
     var titulo by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var prioridad by remember { mutableStateOf("") }
+
     var mensaje by remember {
         mutableStateOf("Aún no hay reporte creado")
     }
@@ -88,33 +124,61 @@ fun RegistroIncidenciasApp() {
         mutableStateOf(false)
     }
 
-    // Registrar y liberar el listener según el ciclo de vida
-    // de este componente de Compose.
+    // Registrar y liberar el listener del acelerómetro.
     DisposableEffect(sensorManager, acelerometro) {
+
         if (sensorManager == null || acelerometro == null) {
+
             estadoMovimiento = "Acelerómetro no disponible"
 
+            Log.e(
+                "TPIS1_SENSOR",
+                "Acelerómetro no disponible"
+            )
+
             onDispose { }
+
         } else {
+
             estadoMovimiento = "Esperando lectura del sensor"
             lecturaRecibida = false
 
+            Log.d(
+                "TPIS1_SENSOR",
+                "Sensor encontrado: ${acelerometro.name}"
+            )
+
             val listener = object : SensorEventListener {
+
                 override fun onSensorChanged(event: SensorEvent?) {
+
+                    Log.d(
+                        "TPIS1_SENSOR",
+                        "Evento recibido"
+                    )
+
                     if (
                         event == null ||
                         event.sensor.type != Sensor.TYPE_ACCELEROMETER
                     ) {
+                        Log.e(
+                            "TPIS1_SENSOR",
+                            "Evento inválido"
+                        )
                         return
                     }
 
                     ejeX = event.values[0]
                     ejeY = event.values[1]
                     ejeZ = event.values[2]
+
                     lecturaRecibida = true
 
-                    // La magnitud incluye la gravedad.
-                    // Esta regla ofrece una interpretación aproximada.
+                    Log.d(
+                        "TPIS1_SENSOR",
+                        "X=$ejeX | Y=$ejeY | Z=$ejeZ"
+                    )
+
                     val magnitud = sqrt(
                         ejeX * ejeX +
                                 ejeY * ejeY +
@@ -122,7 +186,9 @@ fun RegistroIncidenciasApp() {
                     )
 
                     estadoMovimiento = if (
-                        abs(magnitud - SensorManager.GRAVITY_EARTH) > 2.0f
+                        abs(
+                            magnitud - SensorManager.GRAVITY_EARTH
+                        ) > 2.0f
                     ) {
                         "Movimiento detectado"
                     } else {
@@ -134,22 +200,50 @@ fun RegistroIncidenciasApp() {
                     sensor: Sensor?,
                     accuracy: Int
                 ) {
-                    // No se requiere una acción adicional por ahora.
+                    Log.d(
+                        "TPIS1_SENSOR",
+                        "Precisión del sensor: $accuracy"
+                    )
                 }
             }
+
+            val handlerPrincipal = Handler(Looper.getMainLooper())
+
+            Log.d(
+                "TPIS1_SENSOR",
+                "Intentando registrar listener..."
+            )
 
             val registrado = sensorManager.registerListener(
                 listener,
                 acelerometro,
-                SensorManager.SENSOR_DELAY_NORMAL
+                SensorManager.SENSOR_DELAY_NORMAL,
+                handlerPrincipal
+            )
+
+            Log.d(
+                "TPIS1_SENSOR",
+                "Resultado del registro: $registrado"
             )
 
             if (!registrado) {
+
                 estadoMovimiento =
                     "No fue posible iniciar la lectura del sensor"
+
+                Log.e(
+                    "TPIS1_SENSOR",
+                    "Error al registrar el listener"
+                )
             }
 
             onDispose {
+
+                Log.d(
+                    "TPIS1_SENSOR",
+                    "Liberando listener"
+                )
+
                 sensorManager.unregisterListener(listener)
             }
         }
@@ -163,6 +257,7 @@ fun RegistroIncidenciasApp() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "Registro de bitácora",
             style = MaterialTheme.typography.headlineMedium
@@ -176,12 +271,16 @@ fun RegistroIncidenciasApp() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Formulario de registro de incidencias
-        Card(modifier = Modifier.fillMaxWidth()) {
+        // Formulario de registro de incidencias.
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Text(
                     text = "Registrar incidencia",
                     style = MaterialTheme.typography.titleMedium
@@ -228,6 +327,7 @@ fun RegistroIncidenciasApp() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+
                     Card(
                         modifier = Modifier
                             .weight(1f)
@@ -237,6 +337,7 @@ fun RegistroIncidenciasApp() {
                                 mensaje = "Prioridad seleccionada: Baja"
                             }
                     ) {
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -256,6 +357,7 @@ fun RegistroIncidenciasApp() {
                                 mensaje = "Prioridad seleccionada: Media"
                             }
                     ) {
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -275,6 +377,7 @@ fun RegistroIncidenciasApp() {
                                 mensaje = "Prioridad seleccionada: Alta"
                             }
                     ) {
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -320,12 +423,16 @@ fun RegistroIncidenciasApp() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Diagnóstico del dispositivo
-        Card(modifier = Modifier.fillMaxWidth()) {
+        // Diagnóstico del dispositivo.
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
+
                 Text(
                     text = "Diagnóstico del dispositivo",
                     style = MaterialTheme.typography.titleMedium
@@ -352,6 +459,7 @@ fun RegistroIncidenciasApp() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (sensorManager != null && acelerometro != null) {
+
                     Text(
                         text = "Sensor: ${acelerometro.name}"
                     )
@@ -378,7 +486,9 @@ fun RegistroIncidenciasApp() {
                         },
                         style = MaterialTheme.typography.bodyLarge
                     )
+
                 } else {
+
                     Text(
                         text = "No se pueden obtener lecturas porque el acelerómetro no está disponible."
                     )
@@ -389,12 +499,17 @@ fun RegistroIncidenciasApp() {
 }
 
 private fun formatearValor(valor: Float): String {
-    return String.format(Locale.getDefault(), "%.2f", valor)
+    return String.format(
+        Locale.getDefault(),
+        "%.2f",
+        valor
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RegistroIncidenciasPreview() {
+
     RegistroIncidenciasTheme {
         RegistroIncidenciasApp()
     }
